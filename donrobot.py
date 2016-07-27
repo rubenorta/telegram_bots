@@ -1,30 +1,25 @@
 import os, glob, json
 from pprint import pprint
+import audio
 
 class Donrobot:
 
 	def __init__(self, path = '/tmp/donrobot/'):
 
 		self.work = path
-		self.export = path + 'export/'
 		self.messages = []
 		self.current_audio = ''
 		self.robot_face = u'\U0001F916'
 
 		if not os.path.exists(path):
 			os.makedirs(path)
-			os.makedirs(self.export)
-			print "Creating Working Area.."
-	
-		elif not os.path.exists(self.export):
-			os.makedirs(self.export)
 			print "Creating Working Area.."
 
 		else:
 			for file in glob.glob(self.work + "*.json"):
 				with open(file) as json_file:
 					msg = json.load(json_file)
-					pprint(msg)
+					#pprint(msg)
 					file_id = msg['voice']['file_id']
 					print('Loading file : ' + str(file_id))
 					self.messages.append(msg)
@@ -37,11 +32,10 @@ class Donrobot:
 			json.dump(msg, outfile)
 		return file_id, file_dest
 
-	def process(self, msg):
+	def process_voice(self, file_path):
 
-		file_id = msg['voice']['file_id']
-		Audio.clean_audio(file_id)
-		self.current_audio = Audio.vocoder(file_id)
+		Audio.clean_audio(file_path)
+		self.current_audio = Audio.vocoder(file_path)
 
 	def clean_area(self, file_id):
 

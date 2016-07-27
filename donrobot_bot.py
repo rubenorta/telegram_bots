@@ -3,7 +3,7 @@ import donrobot, telerobot
 
 TOKEN = sys.argv[1] 
 
-DonRobot = donrobot.Donrobot();
+DonRobot = donrobot.Donrobot()
 telerobot.Telerobot(TOKEN,DonRobot)
 
 while 1:

@@ -1,4 +1,6 @@
 import telepot
+import re
+from pprint import pprint
 
 class Telerobot:
 
@@ -14,12 +16,17 @@ class Telerobot:
         print(content_type, chat_type, chat_id)
 
         if content_type == 'voice':
-            file_id, file_dest = self.robot.prepare(msg)
-            self.bot.download_file(file_id, file_dest)
-            self.robot.process(msg)
+            self.bot.download_file(msg['voice']['file_id'], self.robot.work_area + file_id)
+            self.robot.process_voice(msg)
             self.bot.sendMessage(chat_id, 'Don Robot dice....')
             self.bot.sendVoice(chat_id, open(self.robot.current_audio, 'rb'))
             print("Sending..." + self.robot.current_audio)
+
+        if content_type == 'text':
+            finder = re.compile(ur'/debug (\d*)')
+            result = re.search(finder, msg['text'])
+            if result and (result.group(1) == '1234'):
+                print "MODO DEBUG"   
 
         elif content_type == 'new_chat_member':
             self.bot.sendMessage(chat_id, self.bot.getWellcomeMsg())
