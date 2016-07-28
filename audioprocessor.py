@@ -5,12 +5,20 @@ from pydub.effects import invert_phase, compress_dynamic_range
 from aubio import source, sink, pvoc
 from pprint import pprint
 
-class Audio:
+class Audioprocessor:
 
-	def vocoder(file_path):
+	def __init__(self):
+		pass
+
+	def process(self, file_path):
 		
-		in_file = '/tmp/don_robot/output/' + file_id + ".mp3"
-		out_file = '/tmp/don_robot/output/' + file_id + "-voc.mp3"
+		self.clean_audio(file_path)
+		return self.vocoder(file_path)
+
+	def vocoder(self, file_path):
+		
+		in_file = file_path + "-clean.mp3"
+		out_file = file_path + "-voc.mp3"
 
 		samplerate = 44100
 		f = source(in_file, samplerate, 256)
@@ -32,28 +40,27 @@ class Audio:
 
 		format_str = "read {:d} samples from {:s}, written to {:s}"
 		print(format_str.format(total_frames, f.uri, g.uri))
+		print("[x] Robotized")
 		return out_file
 
-	def detect_leading_silence(sound, silence_threshold=-50.0, chunk_size=10):
+	def detect_leading_silence(self, sound, silence_threshold=-50.0, chunk_size=10):
 
 		trim_ms = 0
 		while sound[trim_ms:trim_ms+chunk_size].dBFS < silence_threshold:
 			trim_ms += chunk_size
 		return trim_ms
 
-	def clean_audio(filepath):
+	def clean_audio(self, file_path):
 
 		print "Processing audio"
-		file = origin_path + file_id
-		sound = AudioSegment.from_ogg(file)
+		sound = AudioSegment.from_ogg(file_path + ".ogg")
 
-		start_trim = detect_leading_silence(sound)
-		end_trim = detect_leading_silence(sound.reverse())
+		start_trim = self.detect_leading_silence(sound)
+		end_trim = self.detect_leading_silence(sound.reverse())
 		duration = len(sound)    
 		sound = sound[start_trim:duration-end_trim]
 		sound = invert_phase(sound)
 
 		output_file = file_path + "-clean.mp3"
 		file_handle = sound.export( output_file, format="mp3")
-		print("Output File....")
-		pprint(file_handle)
+		print("[x] Cleaned")
