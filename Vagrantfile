@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.oetwork "forwarded_port", guest: 80, host: 8080, auto_correct: true
+  config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -70,8 +70,9 @@ Vagrant.configure("2") do |config|
   # SHELL
   config.vm.provision :shell, :path => ".provision/bootstrap.sh"
   config.vm.provision "file", source: "~/.gitconfig", destination: "~/.gitconfig"
-  config.vm.provider :virtualbox do |vb|
-  	vb.gui = true
-  end
+  
+  #config.vm.provider :virtualbox do |vb|
+  #	vb.gui = true
+  #end
 
 end
