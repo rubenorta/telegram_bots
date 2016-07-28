@@ -1,15 +1,15 @@
 import os, glob, json
 from pprint import pprint
-import audio
 
 class Donrobot:
 
-	def __init__(self, path = '/tmp/donrobot/'):
+	def __init__(self, voice, path = '/tmp/donrobot/'):
 
 		self.work = path
 		self.messages = []
 		self.current_audio = ''
 		self.robot_face = u'\U0001F916'
+		self.effects = voice
 
 		if not os.path.exists(path):
 			os.makedirs(path)
@@ -25,17 +25,14 @@ class Donrobot:
 					self.messages.append(msg)
 
 	def prepare(self, msg):
-
 		file_id = msg['voice']['file_id']
 		file_dest = self.work + file_id
 		with open(file_dest + '.json', 'w') as outfile:
 			json.dump(msg, outfile)
 		return file_id, file_dest
 
-	def process_voice(self, file_path):
-
-		Audio.clean_audio(file_path)
-		self.current_audio = Audio.vocoder(file_path)
+	def process_voice(self, file_path):	
+		return self.effects.process(file_path)
 
 	def clean_area(self, file_id):
 
@@ -54,3 +51,5 @@ class Donrobot:
 	def get_leave_msg(self):
 		return 'Adios! Ya sabes donde andamos ' + self.robot_face
 
+	def get_work_area(self,msg):
+		return self.work + msg['voice']['file_id'] + ".ogg"

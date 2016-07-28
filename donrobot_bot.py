@@ -1,10 +1,11 @@
 import sys, time
-import donrobot, telerobot
+import donrobot, telerobot, audioprocessor
 
 TOKEN = sys.argv[1] 
 
-DonRobot = donrobot.Donrobot()
-telerobot.Telerobot(TOKEN,DonRobot)
+voice = audioprocessor.Audioprocessor();
+donRobot = donrobot.Donrobot(voice)
+telerobot.Telerobot(TOKEN,donRobot)
 
 while 1:
     time.sleep(10)
